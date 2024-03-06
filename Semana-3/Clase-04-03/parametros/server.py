@@ -8,8 +8,8 @@ estudiantes = [
     {
         "id": 1,
         "nombre": "Pedrito",
-        "apellido": "García",
-        "carrera": "Ingeniería de Sistemas",
+        "apellido": "Garcia",
+        "carrera": "Ingenieria de Sistemas",
     },
 ]
 
@@ -37,7 +37,20 @@ class RESTRequestHandler(BaseHTTPRequestHandler):
         parsed_path = urlparse(self.path)
         query_params = parse_qs(parsed_path.query)
 
-        if parsed_path.path == "/estudiantes":
+        if "nombre" in query_params and "apellido" in query_params:
+                nombre1 = query_params["nombre"][0]
+                apellido1 = query_params["apellido"][0]
+                estudiantes_filtrados1 = [
+                    estudiante
+                    for estudiante in estudiantes
+                    if estudiante["nombre"] == nombre1 and estudiante["apellido"] == apellido1
+                ]
+                if estudiantes_filtrados1 != []:
+                    self.response_handler(200, estudiantes_filtrados1)
+                else:
+                    self.response_handler(204, "Error")
+        elif parsed_path.path == "/estudiantes":
+            # Busqueda de un estudiante por le nombre
             if "nombre" in query_params:
                 nombre = query_params["nombre"][0]
                 estudiantes_filtrados = [
@@ -49,8 +62,22 @@ class RESTRequestHandler(BaseHTTPRequestHandler):
                     self.response_handler(200, estudiantes_filtrados)
                 else:
                     self.response_handler(204, [])
+            # Busqueda de un estudiante por apellido
+            elif "apellido" in query_params:
+                apellido = query_params["apellido"][0]
+                estudiantes_filtrados_apellido = [
+                    estudiante
+                    for estudiante in estudiantes
+                    if estudiante["apellido"] == apellido
+                ]
+                if estudiantes_filtrados_apellido:
+                    self.response_handler(200, estudiantes_filtrados_apellido)
+                else:
+                    self.response_handler(204, [])
+            
             else:
                 self.response_handler(200, estudiantes)
+            
         elif self.path.startswith("/estudiantes/"):
             id = int(self.path.split("/")[-1])
             estudiante = self.find_student(id)
