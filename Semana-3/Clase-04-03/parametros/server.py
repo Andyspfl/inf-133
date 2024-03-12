@@ -45,10 +45,10 @@ class RESTRequestHandler(BaseHTTPRequestHandler):
                     for estudiante in estudiantes
                     if estudiante["nombre"] == nombre1 and estudiante["apellido"] == apellido1
                 ]
-                if estudiantes_filtrados1 != []:
+                if estudiantes_filtrados1 :
                     self.response_handler(200, estudiantes_filtrados1)
                 else:
-                    self.response_handler(204, "Error")
+                    self.response_handler(204, [])
         elif parsed_path.path == "/estudiantes":
             # Busqueda de un estudiante por le nombre
             if "nombre" in query_params:
