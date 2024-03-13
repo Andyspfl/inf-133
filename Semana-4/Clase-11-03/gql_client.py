@@ -149,3 +149,10 @@ mutation {
 print("\n Elimina un estudiante\n")
 response_mutation = requests.post(url, json={'query': query_eliminar_por_carrera})
 print(response_mutation.text)
+
+
+
+print("\n Lista a todos los estudiantes\n")
+# Lista de todos los estudiantes
+response = requests.post(url, json={'query': query_lista})
+print(response.text)

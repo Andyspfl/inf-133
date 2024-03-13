@@ -84,13 +84,15 @@ class DeleteEstudiantePorCarrera(Mutation):
                 NoDelete.append(estudiantes[i])
             i+=1
             
-            
         # Solucion numero 2   
         # for estudiante in estudiantes:
         #     if estudiante.carrera == carrera:
         #         deleteCarrera.append(estudiante)
         #     else:
         #         NoDelete.append(estudiante)
+        
+        estudiantes[:] = NoDelete    
+        
         return DeleteEstudiantePorCarrera(estudiante=deleteCarrera)
 
 class ModificarEstudiante(Mutation):
