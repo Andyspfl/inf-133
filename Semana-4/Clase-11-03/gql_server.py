@@ -78,8 +78,7 @@ class DeleteEstudiantePorCarrera(Mutation):
         # solucion con while
         while(i<len(estudiantes)):
             if estudiantes[i].carrera == carrera:
-                deleteCarrera.append(estudiantes[i])
-                
+                deleteCarrera.append(estudiantes[i]) 
             else:
                 NoDelete.append(estudiantes[i])
             i+=1
@@ -105,12 +104,12 @@ class ModificarEstudiante(Mutation):
     estudiante = Field(Estudiante)
 
     def mutate(root, info, id, nombre, apellido, carrera):
-        for i, estudiante in enumerate(estudiantes):
-            if estudiante.id == id:
-                estudiante.nombre=nombre 
-                estudiante.apellido=apellido 
-                estudiante.carrera=carrera
-                return ModificarEstudiante(estudiante)
+        for i, new_estudiante in enumerate(estudiantes):
+            if new_estudiante.id == id:
+                new_estudiante.nombre=nombre 
+                new_estudiante.apellido=apellido 
+                new_estudiante.carrera=carrera
+                return ModificarEstudiante(estudiante = new_estudiante)
         return None
 
 class Mutations(ObjectType):
