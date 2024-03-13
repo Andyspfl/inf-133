@@ -13,7 +13,6 @@ estudiantes = [
     },
 ]
 
-
 class RESTRequestHandler(BaseHTTPRequestHandler):
     def response_handler(self, status, data):
         self.send_response(status)
