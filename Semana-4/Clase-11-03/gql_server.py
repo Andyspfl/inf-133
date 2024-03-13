@@ -72,11 +72,25 @@ class DeleteEstudiantePorCarrera(Mutation):
 
     def mutate(root, info, carrera):
         deleteCarrera = []
-        for i, estudiante in enumerate(estudiantes):
-            if estudiante.carrera == carrera:
-                deleteCarrera.append(estudiante)
-                estudiantes.pop(i)
-                i=1
+        NoDelete =[]
+        
+        i=0
+        # solucion con while
+        while(i<len(estudiantes)):
+            if estudiantes[i].carrera == carrera:
+                deleteCarrera.append(estudiantes[i])
+                
+            else:
+                NoDelete.append(estudiantes[i])
+            i+=1
+            
+            
+        # Solucion numero 2   
+        # for estudiante in estudiantes:
+        #     if estudiante.carrera == carrera:
+        #         deleteCarrera.append(estudiante)
+        #     else:
+        #         NoDelete.append(estudiante)
         return DeleteEstudiantePorCarrera(estudiante=deleteCarrera)
 
 class ModificarEstudiante(Mutation):
