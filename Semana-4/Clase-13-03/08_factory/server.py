@@ -2,10 +2,19 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 
 class DeliveryServices:
-         @staticmethod
-        def add_delivery(data):
-            
-            return delivery_vehicle
+    @staticmethod
+    def add_delivery(data):
+        vehicle_type = data.get("vehicle_type")
+        return vehicle_type
+
+class HTTPResponseHandler:
+    @staticmethod
+    def handle_response(handler, status, data):
+        handler.send_response(status)
+        handler.send_header("Content-type", "application/json")
+        handler.end_headers()
+        handler.wfile.write(json.dumps(data).encode("utf-8"))
+
 class DeliveryVehicle:
     def __init__(self, capacity):
         self.capacity = capacity
@@ -42,24 +51,26 @@ class DeliveryFactory:
 class DeliveryRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         if self.path == "/delivery":
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            request_data = json.loads(post_data.decode("utf-8"))
+            post_data = self.read_data()
+            vehicle_type = DeliveryServices.add_delivery(post_data)
 
-            vehicle_type = request_data.get("vehicle_type")
+
             delivery_factory = DeliveryFactory()
             delivery_vehicle = delivery_factory.create_delivery_vehicle(vehicle_type)
-
+            
             response_data = {"message": delivery_vehicle.deliver()}
-            self.send_response(200)
-            self.send_header("Content-type", "application/json")
-            self.end_headers()
-            self.wfile.write(json.dumps(response_data).encode("utf-8"))
-        else:
-            self.send_response(404)
-            self.end_headers()
-            self.wfile.write(b"Ruta no encontrada")
 
+            HTTPResponseHandler.handle_response(self, 200, response_data)
+        else:
+            HTTPResponseHandler.handle_response(
+                self, 404, {"Error": "Ruta no existente"}
+            )
+
+    def read_data(self):
+        content_length = int(self.headers["Content-Length"])
+        data = self.rfile.read(content_length)
+        data = json.loads(data.decode("utf-8"))
+        return data
 
 def main():
     try:
