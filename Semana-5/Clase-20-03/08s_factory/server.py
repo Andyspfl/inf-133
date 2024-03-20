@@ -1,21 +1,6 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 
-from urllib.parse import urlparse, parse_qs
-
-class DeliveryServices:
-    @staticmethod
-    def add_delivery(data):
-        vehicle_type = data.get("vehicle_type")
-        return vehicle_type
-
-class HTTPResponseHandler:
-    @staticmethod
-    def handle_response(handler, status, data):
-        handler.send_response(status)
-        handler.send_header("Content-type", "application/json")
-        handler.end_headers()
-        handler.wfile.write(json.dumps(data).encode("utf-8"))
 
 class DeliveryVehicle:
     def __init__(self, capacity):
@@ -25,15 +10,11 @@ class DeliveryVehicle:
     def deliver(self):
         if self.packages_delivered < self.capacity:
             self.packages_delivered += 1
-            return "Entrega realizada con exito"
+            
+            return f"Entrega nro: {self.packages_delivered} realizada con exito"
         else:
             return "El vehículo ha alcanzado su capacidad máxima de entregas"
 
-    
-
-class Scout(DeliveryVehicle):
-    def __init__(self):
-        super().__init__(capacity=5)
 
 class Motorcycle(DeliveryVehicle):
     def __init__(self):
@@ -49,37 +30,46 @@ class DeliveryFactory:
     def create_delivery_vehicle(self, vehicle_type):
         if vehicle_type == "motorcycle":
             return Motorcycle()
-        elif vehicle_type == "scout":
-            return Scout()
         elif vehicle_type == "drone":
             return Drone()
         else:
             raise ValueError("Tipo de vehículo de entrega no válido")
 
 
+class HTTPDataHandler:
+    @staticmethod
+    def handle_response(handler, status, data):
+        handler.send_response(status)
+        handler.send_header("Content-type", "application/json")
+        handler.end_headers()
+        handler.wfile.write(json.dumps(data).encode("utf-8"))
+
+    @staticmethod
+    def handle_reader(handler):
+        content_length = int(handler.headers["Content-Length"])
+        post_data = handler.rfile.read(content_length)
+        return json.loads(post_data.decode("utf-8"))
+
+
 class DeliveryRequestHandler(BaseHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        self.delivery_factory = DeliveryFactory()
+        super().__init__(*args, **kwargs)
+
     def do_POST(self):
         if self.path == "/delivery":
-            post_data = self.read_data()
-            vehicle_type = DeliveryServices.add_delivery(post_data)
-
-
-            delivery_factory = DeliveryFactory()
-            delivery_vehicle = delivery_factory.create_delivery_vehicle(vehicle_type)
-            
+            data = HTTPDataHandler.handle_reader(self)
+            vehicle_type = data.get("vehicle_type")
+            delivery_vehicle = self.delivery_factory.create_delivery_vehicle(
+                vehicle_type
+            )
             response_data = {"message": delivery_vehicle.deliver()}
-
-            HTTPResponseHandler.handle_response(self, 200, response_data)
+            HTTPDataHandler.handle_response(self, 200, response_data)
         else:
-            HTTPResponseHandler.handle_response(
-                self, 404, {"Error": "Ruta no existente"}
+            HTTPDataHandler.handle_response(
+                self, 404, {"message": "Ruta no encontrada"}
             )
 
-    def read_data(self):
-        content_length = int(self.headers["Content-Length"])
-        data = self.rfile.read(content_length)
-        data = json.loads(data.decode("utf-8"))
-        return data
 
 def main():
     try:

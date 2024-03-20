@@ -1,4 +1,3 @@
-
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 
@@ -13,21 +12,6 @@ class Pizza:
         return f"Tamaño: {self.tamaño}, Masa: {self.masa}, Toppings: {', '.join(self.toppings)}"
 
 # Builder: Constructor de pizzas
-class PizzaService:
-    @staticmethod
-    def add_pizza(data):
-        data = json.loads(post_data.decode('utf-8'))
-
-        tamaño = data.get('tamaño', None)
-        masa = data.get('masa', None)
-        toppings = data.get('toppings', [])
-
-        builder = PizzaBuilder()
-        pizzeria = Pizzeria(builder)
-
-        pizza = pizzeria.create_pizza(tamaño, masa, toppings)
-        return pizza
-
 class PizzaBuilder:
     def __init__(self):
         self.pizza = Pizza()
@@ -63,7 +47,16 @@ class PizzaHandler(BaseHTTPRequestHandler):
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
 
-            pizza = PizzaService.add_pizza(post_datadata)
+            data = json.loads(post_data.decode('utf-8'))
+
+            tamaño = data.get('tamaño', None)
+            masa = data.get('masa', None)
+            toppings = data.get('toppings', [])
+
+            builder = PizzaBuilder()
+            pizzeria = Pizzeria(builder)
+
+            pizza = pizzeria.create_pizza(tamaño, masa, toppings)
 
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
