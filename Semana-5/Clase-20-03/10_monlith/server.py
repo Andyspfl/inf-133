@@ -14,15 +14,7 @@ db = {
     },
 }
 
-class HTTPResponseHandler:
-    @staticmethod
-    def handle_response(handler, status, data):
-        handler.send_response(status)
-        handler.send_header("Content-type", "application/json")
-        handler.end_headers()
-        handler.wfile.write(json.dumps(data).encode("utf-8"))
 
-    
 class BlogHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         # Configurar las cabeceras de respuesta
@@ -44,7 +36,9 @@ class BlogHandler(BaseHTTPRequestHandler):
             self.send_error(404, "Ruta no válida")
 
     def do_POST(self):
-        post_data = self.read_data()
+        content_length = int(self.headers["Content-Length"])
+        post_data = self.rfile.read(content_length)
+        post_params = parse_qs(post_data.decode())
 
         # Crear una nueva publicación
         if self.path == "/posts":
@@ -64,7 +58,9 @@ class BlogHandler(BaseHTTPRequestHandler):
         if self.path.startswith("/post/"):
             post_id = int(self.path.split("/")[-1])
             if post_id in db:
-                
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                post_params = parse_qs(post_data.decode())
                 db[post_id]["title"] = post_params.get("title", [db[post_id]["title"]])[
                     0
                 ]
@@ -93,11 +89,7 @@ class BlogHandler(BaseHTTPRequestHandler):
         else:
             self.send_error(404, "Ruta no válida")
 
-    def read_data(self):
-        content_length = int(self.headers["Content-Length"])
-        post_data = self.rfile.read(content_length)
-        post_params = parse_qs(post_data.decode())
-        post_data = json.loads(post_data.decode("utf-8"))
+
 def run_server(server_class=HTTPServer, handler_class=BlogHandler, port=8000):
     server_address = ("", port)
     httpd = server_class(server_address, handler_class)
