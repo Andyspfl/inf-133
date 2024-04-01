@@ -61,6 +61,10 @@ class ChocolateService:
         
         chocolate_product = self.factory.create_product(product_type, weight, flavor, filling)
         
+        global id_counter
+        new_id = id_counter
+        id_counter += 1
+        
         chocolates[new_id] = chocolate_product
         return chocolate_product
 
