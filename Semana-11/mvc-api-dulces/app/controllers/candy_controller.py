@@ -1,23 +1,23 @@
 from flask import Blueprint, request, jsonify
 from models.candy_model import Candy
 from views.candy_view import render_candy_detail, render_candy_list
-from flask_jwt_extended import jwt_required
-from utils.decorators import roles_required
+from flask_jwt_extended import get_jwt_identity
+from utils.decorators import roles_required, jwt_required
 
 # Crear un blueprint para el controlador de dulces
 candy_bp = Blueprint("candy", __name__)
 
 # Ruta para obtener la lista de dulces
 @candy_bp.route("/candies", methods=["GET"])
-@jwt_required()
-@roles_required(roles=["admin", "user"])
+@jwt_required
+#@roles_required(roles=["admin", "user"])
 def get_candies():
     candies = Candy.get_all()
     return jsonify(render_candy_list(candies))
 
 # Ruta para obtener un dulce específico por su ID
 @candy_bp.route("/candies/<int:id>", methods=["GET"])
-@jwt_required()
+@jwt_required
 @roles_required(roles=["admin", "user"])
 def get_candy(id):
     candy = Candy.get_by_id(id)
@@ -27,7 +27,7 @@ def get_candy(id):
 
 # Ruta para crear un nuevo dulce
 @candy_bp.route("/candies", methods=["POST"])
-@jwt_required()
+@jwt_required
 @roles_required(roles=["admin"])
 def create_candy():
     data = request.json
@@ -45,7 +45,7 @@ def create_candy():
     
 # Ruta para actualizar un dulce existente por su ID
 @candy_bp.route("/candies/<int:id>", methods=["PUT"])
-@jwt_required()
+@jwt_required
 @roles_required(roles=["admin"])
 def update_candy(id):
     candy = Candy.get_by_id(id)
@@ -64,7 +64,7 @@ def update_candy(id):
 
 # Ruta para eliminar un dulce existente por su ID
 @candy_bp.route("/candies/<int:id>", methods=["DELETE"])
-@jwt_required()
+@jwt_required
 @roles_required(roles=["admin"])
 def delete_candy(id):
     candy = Candy.get_by_id(id)
