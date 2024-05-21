@@ -240,7 +240,7 @@
                         "type": "string"
                     },
                     "weight": {
-                        "type": "string"
+                        "type": "float"
                     },
                     "flavor": {
                         "type": "string"
