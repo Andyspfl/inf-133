@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="subtitle is-2">Editar Libro</h2>
+<form method="post">
+    <div class="field">
+        <label for="title">Título:</label>
+        <div class="control">
+            <input type="text" id="title" name="title" required class="input" value="{{ book.title }}">
+        </div>
+    </div>
+    <div class="field">
+        <label for="author">Autor:</label>
+        <div class="control">
+            <input type="text" id="author" name="author" required class="input" value="{{ book.author }}">
+        </div>
+    </div>
+    <div class="field">
+        <label for="edition">Edición:</label>
+        <div class="control">
+            <input type="text" id="edition" name="edition" required class="input" value="{{ book.edition }}">
+        </div>
+    </div>
+    <div class="field">
+        <label for="availability">Disponibilidad:</label>
+        <div class="control">
+            <input type="text" id="availability" name="availability" required class="input" value="{{ book.availability }}">
+        </div>
+    </div>
+    <input type="submit" value="Guardar Cambios" class="button is-primary">
+</form>
+{% endblock %}
