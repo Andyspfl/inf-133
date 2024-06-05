@@ -4,6 +4,7 @@ from controllers.candy_controller import candy_bp
 from controllers.user_controller import user_bp
 from flask_swagger_ui import get_swaggerui_blueprint
 from database import db
+from flask_cors import CORS  # Importa CORS
 
 app = Flask(__name__)
 
@@ -36,6 +37,11 @@ jwt=JWTManager(app)
 
 app.register_blueprint(user_bp, url_prefix="/api")
 app.register_blueprint(candy_bp, url_prefix="/api")
+
+
+# Aplica CORS a toda la aplicación
+CORS(app)
+
 
 # Crea las tablas si no existen
 with app.app_context():

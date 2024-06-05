@@ -20,3 +20,4 @@ def render_candy_detail(candy):
         "flavor": candy.flavor,
         "origin": candy.origin
     }
+    

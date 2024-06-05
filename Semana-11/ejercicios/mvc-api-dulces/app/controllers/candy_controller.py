@@ -9,8 +9,7 @@ candy_bp = Blueprint("candy", __name__)
 
 # Ruta para obtener la lista de dulces
 @candy_bp.route("/candies", methods=["GET"])
-@jwt_required
-#@roles_required(roles=["admin", "user"])
+@roles_required(roles=["admin", "user"])
 def get_candies():
     candies = Candy.get_all()
     return jsonify(render_candy_list(candies))
@@ -28,7 +27,6 @@ def get_candy(id):
 # Ruta para crear un nuevo dulce
 @candy_bp.route("/candies", methods=["POST"])
 @jwt_required
-@roles_required(roles=["admin"])
 def create_candy():
     data = request.json
     brand = data.get("brand")
