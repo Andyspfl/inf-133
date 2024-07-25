@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
-from controllers.candy_controller import candy_bp
-from controllers.user_controller import user_bp
+from app.controllers.candy_controller import candy_bp
+from app.controllers.user_controller import user_bp
 from flask_swagger_ui import get_swaggerui_blueprint
-from database import db
+from app.database import db
 from flask_cors import CORS  # Importa CORS
 
 app = Flask(__name__)

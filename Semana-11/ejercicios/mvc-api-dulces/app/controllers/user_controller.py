@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
-from models.user_model import User
+from app.models.user_model import User
 from flask_jwt_extended import create_access_token
 from werkzeug.security import check_password_hash
-from views.user_view import render_user_detail, render_user_list
-from utils.decorators import roles_required, jwt_required
+from app.views.user_view import render_user_detail, render_user_list
+from app.utils.decorators import roles_required, jwt_required
 
 user_bp = Blueprint("user", __name__)
 

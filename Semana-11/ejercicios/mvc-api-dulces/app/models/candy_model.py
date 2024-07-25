@@ -1,4 +1,4 @@
-from database import db
+from app.database import db
 
 # Define la clase Candy que hereda de db.Model
 # "Candy" representa la tabla "candies" en la base de datos
